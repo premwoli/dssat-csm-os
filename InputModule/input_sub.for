@@ -1,5 +1,5 @@
 C=======================================================================
-C COPYRIGHT 1998-2020 
+C COPYRIGHT 1998-2022
 C                     DSSAT Foundation                      
 C                     University of Florida, Gainesville, Florida
 C                     International Fertilizer Development Center
@@ -9,9 +9,9 @@ C=======================================================================
 C=======================================================================
 C  INPUT, Subroutine
 C
-C  INPUT MODULE FOR DSSAT MODELS,  DSSAT v4.5
+C  INPUT MODULE FOR DSSAT MODELS,  DSSAT v4.8
 C
-C  October 2007      Gerrit Hoogenboom, Cheryl Porter and Jim Jones
+C  Gerrit Hoogenboom, Cheryl Porter and Jim Jones
 C
 C
 C  Reads FileX, includes sensitivity analysis and writes a
@@ -125,7 +125,7 @@ C-SUN INTEGER       LNBLNK
       REAL          INO3(NL),INH4(NL),EFINOC,EFNFIX
       REAL          AINO3,AINH4,TNMIN,ANO3,ANH4,TSWINI
       REAL          ESW(NL),SW(NL),TLL,TSW,TDUL,TSAT,TPESW,CUMDEP,PESW
-      REAL          PLTFOR
+      REAL          PLTFOR, PMBD
 
       TYPE (ControlType) CONTROL
       TYPE (SwitchType)  ISWITCH
@@ -141,7 +141,7 @@ C-----------------------------------------------------------------------
       CALL GETARG (0,INPUTX)
 !      call path_adj(inputx)
       IPX = LEN_TRIM(INPUTX)
-D     INPUTX = STDPATH // 'DSCSM047.EXE'
+!D     INPUTX = STDPATH // 'DSCSM048.EXE'
       CALL PATHD  (DSSATP,INPUTX,IPX)
       CONTROL % DSSATP = DSSATP
 
@@ -184,7 +184,7 @@ C-----------------------------------------------------------------------
      &     IIRV,FTYPEN,CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,
      &     LNSIM,LNCU,LNHAR,LNENV,LNTIL,LNCHE,
      &     LNFLD,LNSA,LNIC,LNPLT,LNIR,LNFER,LNRES, 
-     &     CONTROL, ISWITCH, UseSimCtr, MODELARG)
+     &     CONTROL, ISWITCH, UseSimCtr, MODELARG, PMBD)
 
 C-----------------------------------------------------------------------
 C     Call IPSOIL
@@ -217,8 +217,11 @@ C-----------------------------------------------------------------------
            IF (YRIC .LT. YRSIM .AND. YRIC .GT. 0) THEN
              YRSIM = YRIC
              CALL YR_DOY (YRSIM,YEAR,ISIM)
-             IF (MEWTH .EQ. 'M' .OR. MEWTH .EQ. 'G') THEN
+             IF (MEWTH .EQ. 'M' .OR. RNMODE .EQ. 'Y') THEN
                 WRITE (FILEW(5:6),'(I2)') YEAR
+             ENDIF
+             IF (MEWTH .EQ. 'G') THEN
+                WRITE (FILEWG(5:6),'(I2)') YEAR
              ENDIF
            ENDIF
          ENDIF
@@ -317,14 +320,14 @@ C-----------------------------------------------------------------------
      &            YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,
      &            SWINIT,INH4,INO3,NYRS,VARNO,VRNAME,CROP,MODEL,
      &            RUN,FILEIO,EXPN,ECONO,FROP,TRTALL,TRTN,
-     &            CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,ISENS)
+     &            CHEXTR,NFORC,PLTFOR,NDOF,PMTYPE,ISENS,PMBD)
       
         CALL OPTEMPXY2K (YRIC,PRCROP,WRESR,WRESND,EFINOC,EFNFIX,
      &           SWINIT,INH4,INO3,NYRS,VARNO,VRNAME,CROP,
      &           FILEIO,FROP,ECONO,ATLINE,
      &           LNSIM,LNCU,LNHAR,LNENV,LNTIL,LNCHE,
      &           LNFLD,LNSA,LNIC,LNPLT,LNIR,LNFER,LNRES,
-     &           NFORC,PLTFOR,PMTYPE,NDOF,CHEXTR, MODEL, PATHEX)
+     &           NFORC,PLTFOR,PMTYPE,NDOF,CHEXTR, MODEL, PATHEX,PMBD)
 
 C-----------------------------------------------------------------------
 C     Write DSSAT Format Version 4 Output files

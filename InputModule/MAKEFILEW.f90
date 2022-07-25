@@ -14,6 +14,10 @@
 !  Revision history
 !
 !  01/23/2020 FO  Written
+!  11/10/2020 CHP Need to make revisions here like in IPEXP for forecast mode
+!       This mode needs to keep FILEW (WTH file) and potentially also 
+!       FILEWC (CLI) file and FILEWG (WTG file).
+!  10/21/2021 FO  Updated GETLUN for weather file unit
 !-----------------------------------------------------------------------
 !  INPUT  : DSSATP, PATHEX, FILEX
 !
@@ -84,7 +88,7 @@
               CALL IGNORE2(LUNEXP,LINEXP,ISECT,CHARTEST)
               
               IF(ISECT .EQ. 1) THEN
-                READ (CHARTEST,'(I2,10X,A8)', IOSTAT=ERRNUM) TLNFLD,WSTA
+                READ (CHARTEST,'(I3,9X,A8)', IOSTAT=ERRNUM) TLNFLD,WSTA
                 IF (ERRNUM .NE. 0) CALL ERROR (ERRKEY,4,FILEX,LINEXP)
                 IF (WSTA(1:1) .EQ. BLANK) CALL ERROR (ERRKEY,3,FILEX,LINEXP)
               ELSE
@@ -329,7 +333,7 @@
         DOY     = -99
         YEARDOY = -99
         
-        CALL GETLUN('FILEW', UNIT)
+        CALL GETLUN('LUNMFW', UNIT)
         
         INQUIRE(FILE=FILEWW, EXIST = FEXIST)
         IF(FEXIST) THEN
@@ -397,7 +401,7 @@
           MSG(3) = 'Set simulation to 5-digits first weather date'
           FirstWeatherDate = -99
           
-          CALL WARNING(3,ERRKEY,MSG)
+          CALL INFO(3,ERRKEY,MSG)
         ENDIF
       
       ENDIF

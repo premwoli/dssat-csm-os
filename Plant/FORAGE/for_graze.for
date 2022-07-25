@@ -246,11 +246,18 @@ C=======================================================================
               Gcrlf = GLEAF*RHOL
               Gcrst = GSTEM*RHOS
 
-              Gpctn = Gtotn/Gtot*100
-              Gplig = (GLEAF*pliglf+GSTEM*pligst)/Gtot*100
-              Gpcho = (Gcrlf+Gcrst)/Gtot*100
-              Gpctlf = GLEAF/Gtot*100
-
+			IF (Gtot .gt. 1.e-6) THEN
+                Gpctn = Gtotn/Gtot*100
+                Gplig = (GLEAF*pliglf+GSTEM*pligst)/Gtot*100
+                Gpcho = (Gcrlf+Gcrst)/Gtot*100
+                Gpctlf = GLEAF/Gtot*100
+		    ELSE
+                Gpctn = 0.0
+                Gplig = 0.0
+                Gpcho = 0.0
+                Gpctlf = 0.0
+			ENDIF
+              
               WTLFb  = WTLF                              !g/m2
               STMWTb = STMWT                             !g/m2
               WTLF   = MAX((WTLF-GLEAF),0.0)             !g/m2
