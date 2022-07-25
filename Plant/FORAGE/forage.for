@@ -61,6 +61,10 @@ C=======================================================================
      &    YRNR3, YRNR5, YRNR7, MDATE, YRPLT, YRSIM
       INTEGER STGDOY(20)
 
+      !prem added
+      INTEGER DOY,YEAR,PLD
+      !prem end
+
       REAL AGEFAC, AGRSD3, AREALF, ASMDOT
       REAL AGRLF, AGRRT, AGRSH2, AGRSTM
       REAL AGRSD1, AGRSD2, AGRVG, AGRVG2
@@ -245,6 +249,8 @@ C------------------------------------------------------------
       REAL FREQ,CUHT !DIEGO ADDED 02/14/2017
       REAL MOWC,RSPLC !DIEGO ADDED 03/10/2017
       LOGICAL RUNYET
+      
+      REAL RAIN, RHUM, WINDSP
 
 !     Arrays which contain data for printing in SUMMARY.OUT file
       INTEGER, PARAMETER :: SUMNUM = 2
@@ -303,6 +309,15 @@ C------------------------------------------------------------
       TGRO   = WEATHER % TGRO  
       TGROAV = WEATHER % TGROAV
       TMIN   = WEATHER % TMIN  
+
+      !prem added
+      RAIN   = WEATHER % RAIN  
+      RHUM   = WEATHER % RHUM  
+      WINDSP = WEATHER % WINDSP  
+      DOY    = MOD(YRDOY,1000)
+      YEAR   = (YRDOY-DOY)/1000
+      PLD    = MOD(YRPLT,1000)
+      !prem end
 
 ! Disable P stress
       pstres1 = 1
@@ -2017,14 +2032,24 @@ C-----------------------------------------------------------------------
 !      fhpctn = 0.0
       MOWC =0.0
       RSPLC =0.0
-      call forage_harvest(CONTROL,FILECC,
-     &                RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,!Input
-     &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
-     &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
-     &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
-     &                FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,CUHT,MOWC,RSPLC,
-     &                DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
-     &                WTCO, WTLO, WTSO)
+      
+!      call forage_harvest(CONTROL,FILECC,
+!     &                RHOL,RHOS,PCNL,PCNST,SLA,RTWT,STRWT,!Input
+!     &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST, !Input/Output
+!     &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,     !Input/Output
+!     &                AREALF,XLAI,XHLAI,VSTAGE,vstagp,canht,     !Input/Output
+!     &                FHWAH,FHTOTN, FHLPH,fhpctn,FREQ,CUHT,MOWC,RSPLC,
+!     &                DWTCO, DWTLO, DWTSO, PWTCO, PWTLO, PWTSO,
+!     &                WTCO, WTLO, WTSO)
+
+!     prem added      
+      call FOR_GRAZE(YRDOY,RHUM,WINDSP,RAIN,TMIN,TAVG,FILECC,
+     &                RHOL,RHOS,PCNL,PCNST,SLA,            !Input
+     &                WTLF,STMWT,TOPWT,TOTWT,WCRLF,WCRST,  !Input/Output
+     &                WTNLF,WTNST,WNRLF,WNRST,WTNCAN,      !Input/Output
+     &                AREALF,XLAI,XHLAI,VSTAGE,CANHT,      !Input/Output /CANHT changed
+     &                FHWAH,FHTOTN,FHLPH,fhpctn)
+!    prem end
 
       Cumul_FHTOT  = Cumul_FHTOT  + FHWAH
       Cumul_FHTOTN = Cumul_FHTOTN + FHTOTN
